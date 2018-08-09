@@ -66,7 +66,6 @@ public class ListarActivity extends AppCompatActivity {
                     urlConnection.disconnect();
             }
 
-
             return clientes;
         }
 

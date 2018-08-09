@@ -32,4 +32,13 @@ public class Cliente implements Serializable {
     public int hashCode(){
         return this.id;
     }
+
+    @Override
+    public String toString() {
+        return "Cliente{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

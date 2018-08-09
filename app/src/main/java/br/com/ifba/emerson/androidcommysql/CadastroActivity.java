@@ -16,10 +16,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import br.com.ifba.emerson.androidcommysql.models.Cliente;
+
 public class CadastroActivity extends AppCompatActivity {
 
     EditText txtNome;
     EditText txtEmail;
+    Cliente clienteEditado;
+    String acao = "inserir";
+    String mensagem = "Cliente cadastrado com sucesso!";
 
 
     @Override
@@ -30,6 +35,17 @@ public class CadastroActivity extends AppCompatActivity {
         txtNome = (EditText)findViewById(R.id.txtNome);
         txtEmail = (EditText)findViewById(R.id.txtEmail);
 
+        //verifica se começou agora ou se veio de uma edição
+        Intent intent = getIntent();
+        if(intent.hasExtra("cliente")){
+
+            clienteEditado = (Cliente) intent.getSerializableExtra("cliente");
+            txtNome.setText(clienteEditado.getNome());
+            txtEmail.setText(clienteEditado.getEmail());
+            acao = "editar";
+            mensagem = "Cliente alterado com sucesso!";
+        }
+
         ((Button) findViewById(R.id.btnSalvar)).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,11 +55,17 @@ public class CadastroActivity extends AppCompatActivity {
 
                 StringBuilder strUrl = new StringBuilder();
 
-                strUrl.append("http://10.134.17.17/inserir.php?");
+                strUrl.append("http://10.134.17.17/");
+                strUrl.append(acao);
+                strUrl.append(".php?");
                 strUrl.append("nome=");
                 strUrl.append(txtNome.getText().toString());
                 strUrl.append("&email=");
                 strUrl.append(txtEmail.getText().toString());
+                if(clienteEditado != null) {
+                    strUrl.append("&id=");
+                    strUrl.append(clienteEditado.getId());
+                }
                 (new HttpRequest()).execute(strUrl.toString());
             }
         });
@@ -78,7 +100,7 @@ public class CadastroActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             if(result.equals("YES")) {
-                Toast.makeText(getApplicationContext(), "Cliente cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), mensagem, Toast.LENGTH_LONG).show();
                 startActivity(new Intent(getBaseContext(), ListarActivity.class));
             }
             else
